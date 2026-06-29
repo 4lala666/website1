@@ -12,26 +12,41 @@ const COLLECTIONS = [
 ];
 
 const COLLECTION_META = {
-  gabro:  { name: 'Габбро',  folder: 'gabbro', prefix: 'Г'  },
-  korday: { name: 'Кордай',  folder: 'korday', prefix: 'К'  },
-  kurty:  { name: 'Курты',   folder: 'kurty',  prefix: 'КУ' },
+  gabro:  { name: 'Габбро', folder: 'gabbro', prefix: 'Г'  },
+  korday: { name: 'Кордай', folder: 'korday', prefix: 'К'  },
+  kurty:  { name: 'Курты',  folder: 'kurty',  prefix: 'КУ' },
 };
 
-function makeItems(collectionKey, count) {
+// Exact filenames per collection (matches public/images/catalog/muslim/)
+const GABRO_FILES = Array.from({ length: 24 }, (_, i) => `gabbro${i + 1}.jpg`);
+
+// korday7.jpg and korday8.jpg are absent — skip them
+const KORDAY_FILES = [
+  ...Array.from({ length: 6 },  (_, i) => `korday${i + 1}.jpg`),   // 1-6
+  ...Array.from({ length: 17 }, (_, i) => `korday${i + 9}.jpg`),   // 9-25
+];
+
+// kurty1-24 + kurtyarka1-7 (same folder, different prefix)
+const KURTY_FILES = [
+  ...Array.from({ length: 24 }, (_, i) => `kurty${i + 1}.jpg`),
+  ...Array.from({ length: 7 },  (_, i) => `kurtyarka${i + 1}.jpg`),
+];
+
+function makeItems(collectionKey, files) {
   const { name, folder, prefix } = COLLECTION_META[collectionKey];
-  return Array.from({ length: count }, (_, i) => ({
+  return files.map((filename, i) => ({
     id:             `${folder}-${i + 1}`,
     collection:     collectionKey,
     collectionName: name,
     formNum:        `${prefix}-${String(i + 1).padStart(3, '0')}`,
-    image:          `/images/catalog/muslim/${folder}/${folder}${i + 1}.jpg`,
+    image:          `/images/catalog/muslim/${folder}/${filename}`,
   }));
 }
 
 const ALL_ITEMS = [
-  ...makeItems('gabro',  24),
-  ...makeItems('korday', 24),
-  ...makeItems('kurty',  24),
+  ...makeItems('gabro',  GABRO_FILES),
+  ...makeItems('korday', KORDAY_FILES),
+  ...makeItems('kurty',  KURTY_FILES),
 ];
 
 // ── Image with 404 fallback ───────────────────────────────────────────────────
