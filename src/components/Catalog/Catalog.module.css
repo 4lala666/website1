@@ -1,0 +1,469 @@
+/* ── Section ─────────────────────────────────────────── */
+
+.section {
+  padding: 6rem 0;
+  background: var(--bg-alt);
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ── Header ──────────────────────────────────────────── */
+
+.head {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.head.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.sectionTitle {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 400;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.sectionSub {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* ── Religion tabs ───────────────────────────────────── */
+
+.religionTabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+}
+
+.religionTabs.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.religionTab {
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.religionTab:hover:not(.religionTabDisabled) {
+  color: var(--text-dark);
+}
+
+.religionTabActive {
+  color: var(--text-dark);
+  border-bottom-color: var(--accent);
+}
+
+.religionTabDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.comingSoon {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--accent-pale);
+  color: var(--accent);
+  padding: 0.15rem 0.45rem;
+  border-radius: 100px;
+}
+
+/* ── Collection sub-filter ───────────────────────────── */
+
+.subFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease 0.18s, transform 0.6s ease 0.18s;
+}
+
+.subFilter.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.subBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.subBtn:hover {
+  border-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.subBtnActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.subBtnActive:hover {
+  color: #fff;
+}
+
+.subBtnCount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 100px;
+  line-height: 1.4;
+  min-width: 1.4rem;
+  text-align: center;
+}
+
+.subBtnActive .subBtnCount {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Product grid ────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+/* ── Card ────────────────────────────────────────────── */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    box-shadow 0.3s ease;
+}
+
+.card.cardVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Card image ──────────────────────────────────────── */
+
+.cardImgWrap {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg-alt);
+  position: relative;
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease;
+}
+
+.card:hover .cardImg {
+  transform: scale(1.04);
+}
+
+/* 404 fallback */
+
+.imgFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background: var(--bg-alt);
+}
+
+.imgFallbackIcon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--text-dim);
+}
+
+.imgFallbackText {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+/* ── Card meta ───────────────────────────────────────── */
+
+.cardMeta {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cardCollection {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.cardForm {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* ── Modal backdrop ──────────────────────────────────── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: backdropIn 0.25s ease;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal box ───────────────────────────────────────── */
+
+.modalBox {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  max-width: 860px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  animation: modalIn 0.3s ease;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* ── Modal close ─────────────────────────────────────── */
+
+.modalClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.modalClose:hover {
+  background: #fff;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.modalClose svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ── Modal image ─────────────────────────────────────── */
+
+.modalImgWrap {
+  background: var(--bg-alt);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+}
+
+.modalImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── Modal info ──────────────────────────────────────── */
+
+.modalInfo {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.modalCollection {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.modalFormNum {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--text-dark);
+  line-height: 1.2;
+}
+
+.modalNote {
+  font-size: 0.875rem;
+  color: var(--text-body);
+  line-height: 1.65;
+  padding: 1rem;
+  background: var(--bg-alt);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--accent-light);
+}
+
+.modalBtnWa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--whatsapp);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 100px;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.modalBtnWa:hover {
+  background: var(--whatsapp-hover);
+  transform: translateY(-2px);
+}
+
+.modalWaIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+.modalBtnSecondary {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-align: center;
+  transition: color 0.2s ease;
+}
+
+.modalBtnSecondary:hover {
+  color: var(--accent);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 860px) {
+  .modalBox {
+    grid-template-columns: 1fr;
+    max-height: 92vh;
+  }
+
+  .modalImgWrap {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .modalInfo {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .section { padding: 4rem 0; }
+  .container { padding: 0 1.25rem; }
+}
+
+@media (max-width: 480px) {
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .religionTab { padding: 0.65rem 1rem; font-size: 0.82rem; }
+  .subBtn { font-size: 0.8rem; padding: 0.45rem 0.9rem; }
+  .backdrop { padding: 0.75rem; }
+}

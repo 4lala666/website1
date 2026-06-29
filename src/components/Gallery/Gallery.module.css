@@ -1,0 +1,160 @@
+.section {
+  padding: 6rem 0 0;
+  background: var(--bg);
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.head {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 400;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.sub { font-size: 1rem; color: var(--text-muted); }
+
+/* Slider */
+
+.sliderWrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  background: var(--bg-alt);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+
+.slide.slideActive {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slidePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.7s ease;
+}
+
+.slideActive .slidePlaceholder {
+  transform: scale(1.02);
+}
+
+.placeholderLabel {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+/* Caption */
+
+.slideCaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.5));
+}
+
+.captionText {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.03em;
+}
+
+/* Nav buttons */
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+  box-shadow: var(--shadow);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.navBtn:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.navBtn svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.navPrev { left: 1.5rem; }
+.navNext { right: 1.5rem; }
+
+/* Dots */
+
+.dots {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.dot.dotActive {
+  background: #fff;
+  transform: scale(1.35);
+}
+
+@media (max-width: 600px) {
+  .track { aspect-ratio: 4 / 3; }
+  .navBtn { width: 36px; height: 36px; }
+  .navPrev { left: 0.75rem; }
+  .navNext { right: 0.75rem; }
+}
