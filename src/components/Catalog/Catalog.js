@@ -354,10 +354,15 @@ export default function Catalog() {
               onClick={() => setModalItem(item)}
               aria-label={`${item.collectionName} — Форма ${item.formNum}`}
             >
-              <div className={styles.cardImgWrap}>
+              <div className={
+                item.religion === 'christian'
+                  ? `${styles.cardImgWrap} ${styles.cardImgWrapContain}`
+                  : styles.cardImgWrap
+              }>
                 <ProductImage
                   src={item.image}
                   alt={`${item.collectionName} ${item.formNum}`}
+                  className={item.religion === 'christian' ? styles.cardImgContain : undefined}
                 />
               </div>
               <div className={styles.cardMeta}>
