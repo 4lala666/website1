@@ -2,40 +2,32 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useInView } from '../../hooks/useInView';
 import styles from './Catalog.module.css';
 
-// ── Data ─────────────────────────────────────────────────────────────────────
+// ── Muslim data ───────────────────────────────────────────────────────────────
 
-const COLLECTIONS = [
-  { key: 'all',    label: 'Все' },
-  { key: 'gabro',  label: 'Габро' },
-  { key: 'korday', label: 'Мусульманский' },
-  { key: 'kurty',  label: 'Курты памятник' },
-];
-
-const COLLECTION_META = {
-  gabro:  { name: 'Габбро', folder: 'gabbro', prefix: 'Г'  },
-  korday: { name: 'Кордай', folder: 'korday', prefix: 'К'  },
-  kurty:  { name: 'Курты',  folder: 'kurty',  prefix: 'КУ' },
+const MUSLIM_META = {
+  gabro:  { name: 'Габбро',  folder: 'gabbro', prefix: 'Г'  },
+  korday: { name: 'Кордай',  folder: 'korday', prefix: 'К'  },
+  kurty:  { name: 'Курты',   folder: 'kurty',  prefix: 'КУ' },
 };
 
-// Exact filenames per collection (matches public/images/catalog/muslim/)
 const GABRO_FILES = Array.from({ length: 24 }, (_, i) => `gabbro${i + 1}.jpg`);
 
 // korday7.jpg and korday8.jpg are absent — skip them
 const KORDAY_FILES = [
-  ...Array.from({ length: 6 },  (_, i) => `korday${i + 1}.jpg`),   // 1-6
-  ...Array.from({ length: 17 }, (_, i) => `korday${i + 9}.jpg`),   // 9-25
+  ...Array.from({ length: 6 },  (_, i) => `korday${i + 1}.jpg`),  // 1-6
+  ...Array.from({ length: 17 }, (_, i) => `korday${i + 9}.jpg`),  // 9-25
 ];
 
-// kurty1-24 + kurtyarka1-7 (same folder, different prefix)
 const KURTY_FILES = [
   ...Array.from({ length: 24 }, (_, i) => `kurty${i + 1}.jpg`),
   ...Array.from({ length: 7 },  (_, i) => `kurtyarka${i + 1}.jpg`),
 ];
 
-function makeItems(collectionKey, files) {
-  const { name, folder, prefix } = COLLECTION_META[collectionKey];
+function makeMuslimItems(collectionKey, files) {
+  const { name, folder, prefix } = MUSLIM_META[collectionKey];
   return files.map((filename, i) => ({
-    id:             `${folder}-${i + 1}`,
+    id:             `muslim-${folder}-${i + 1}`,
+    religion:       'muslim',
     collection:     collectionKey,
     collectionName: name,
     formNum:        `${prefix}-${String(i + 1).padStart(3, '0')}`,
@@ -43,11 +35,123 @@ function makeItems(collectionKey, files) {
   }));
 }
 
-const ALL_ITEMS = [
-  ...makeItems('gabro',  GABRO_FILES),
-  ...makeItems('korday', KORDAY_FILES),
-  ...makeItems('kurty',  KURTY_FILES),
+// ── Christian data ────────────────────────────────────────────────────────────
+
+// Folder name starts with Cyrillic "с" (U+0441), not Latin "c"
+const XIAN_ROOT = 'сhristianity';
+
+function xianUrl(subfolder, filename) {
+  return (
+    '/images/catalog/' +
+    encodeURIComponent(XIAN_ROOT) +
+    '/' +
+    encodeURIComponent(subfolder) +
+    '/' +
+    encodeURIComponent(filename)
+  );
+}
+
+// Вертикальные: files 1-12 then 14-74 (no file 13)
+const VERTICAL_FILES = [
+  ...Array.from({ length: 12 }, (_, i) => `христианские вертикальные ${i + 1}.png`),
+  ...Array.from({ length: 61 }, (_, i) => `христианские вертикальные ${i + 14}.png`),
 ];
+
+// Горизонтальные: files 1-11, 13-15, 17-29 (no file 12 or 16)
+const HORIZONTAL_FILES = [
+  ...Array.from({ length: 11 }, (_, i) => `христианские горизонтальные ${i + 1}.png`),
+  ...Array.from({ length: 3 },  (_, i) => `христианские горизонтальные ${i + 13}.png`),
+  ...Array.from({ length: 13 }, (_, i) => `христианские горизонтальные ${i + 17}.png`),
+];
+
+// Детские: exactly 7 files with specific names
+const CHILDREN_FILES = [
+  'христианские вертикальные 20.png',
+  'христианские вертикальные 25.png',
+  'христианские вертикальные 26.png',
+  'христианские вертикальные 43.png',
+  'христианские вертикальные 74.png',
+  'христианские горизонтальные 17.png',
+  'христианские горизонтальные 18.png',
+];
+
+// Семейные: exactly 19 files
+const FAMILY_FILES = [
+  'христианские горизонтальные 2.png',
+  'христианские горизонтальные 3.png',
+  'христианские горизонтальные 4.png',
+  'христианские горизонтальные 5.png',
+  'христианские горизонтальные 6.png',
+  'христианские горизонтальные 7.png',
+  'христианские горизонтальные 10.png',
+  'христианские горизонтальные 12.png',
+  'христианские горизонтальные 13.png',
+  'христианские горизонтальные 14.png',
+  'христианские горизонтальные 16.png',
+  'христианские горизонтальные 20.png',
+  'христианские горизонтальные 21.png',
+  'христианские горизонтальные 22.png',
+  'христианские горизонтальные 24.png',
+  'христианские горизонтальные 25.png',
+  'христианские горизонтальные 27.png',
+  'христианские горизонтальные 28.png',
+  'христианские горизонтальные 29.png',
+];
+
+const XIAN_META = {
+  vertical:   { name: 'Вертикальные',   folder: 'Вертикальные',   prefix: 'В',  files: VERTICAL_FILES   },
+  horizontal: { name: 'Горизонтальные', folder: 'Горизонтальные', prefix: 'Г',  files: HORIZONTAL_FILES },
+  children:   { name: 'Детские',        folder: 'Детские',        prefix: 'Д',  files: CHILDREN_FILES   },
+  family:     { name: 'Семейные',       folder: 'Семейные',       prefix: 'С',  files: FAMILY_FILES     },
+};
+
+function makeXianItems(collectionKey) {
+  const { name, folder, prefix, files } = XIAN_META[collectionKey];
+  return files.map((filename, i) => ({
+    id:             `xian-${collectionKey}-${i + 1}`,
+    religion:       'christian',
+    collection:     collectionKey,
+    collectionName: name,
+    formNum:        `${prefix}-${String(i + 1).padStart(3, '0')}`,
+    image:          xianUrl(folder, filename),
+  }));
+}
+
+// ── Combined item list ────────────────────────────────────────────────────────
+
+const ALL_ITEMS = [
+  ...makeMuslimItems('gabro',  GABRO_FILES),
+  ...makeMuslimItems('korday', KORDAY_FILES),
+  ...makeMuslimItems('kurty',  KURTY_FILES),
+  ...makeXianItems('vertical'),
+  ...makeXianItems('horizontal'),
+  ...makeXianItems('children'),
+  ...makeXianItems('family'),
+];
+
+// ── Filter config per religion ────────────────────────────────────────────────
+
+const RELIGION_COLLECTIONS = {
+  muslim: [
+    { key: 'all',    label: 'Все' },
+    { key: 'gabro',  label: 'Габро' },
+    { key: 'korday', label: 'Мусульманский' },
+    { key: 'kurty',  label: 'Курты памятник' },
+  ],
+  christian: [
+    { key: 'all',        label: 'Все' },
+    { key: 'vertical',   label: 'Вертикальные' },
+    { key: 'horizontal', label: 'Горизонтальные' },
+    { key: 'children',   label: 'Детские' },
+    { key: 'family',     label: 'Семейные' },
+  ],
+};
+
+function itemCount(rel, col) {
+  return ALL_ITEMS.filter(
+    item => item.religion === rel && (col === 'all' || item.collection === col)
+  ).length;
+}
 
 // ── Image with 404 fallback ───────────────────────────────────────────────────
 
@@ -163,16 +267,25 @@ function Modal({ item, onClose }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function Catalog() {
-  const [ref, inView]           = useInView(0.05);
+  const [ref, inView]               = useInView(0.05);
+  const [religion, setReligion]     = useState('muslim');
   const [collection, setCollection] = useState('all');
   const [modalItem, setModalItem]   = useState(null);
 
+  const currentCollections = RELIGION_COLLECTIONS[religion];
+
   const filtered = useMemo(
-    () => collection === 'all'
-      ? ALL_ITEMS
-      : ALL_ITEMS.filter(item => item.collection === collection),
-    [collection]
+    () => ALL_ITEMS.filter(item =>
+      item.religion === religion &&
+      (collection === 'all' || item.collection === collection)
+    ),
+    [religion, collection]
   );
+
+  function handleReligion(rel) {
+    setReligion(rel);
+    setCollection('all');
+  }
 
   return (
     <section id="catalog" className={styles.section} ref={ref}>
@@ -190,18 +303,31 @@ export default function Catalog() {
 
         {/* Religion tabs */}
         <div className={inView ? `${styles.religionTabs} ${styles.visible}` : styles.religionTabs}>
-          <button className={`${styles.religionTab} ${styles.religionTabActive}`}>
+          <button
+            className={
+              religion === 'muslim'
+                ? `${styles.religionTab} ${styles.religionTabActive}`
+                : styles.religionTab
+            }
+            onClick={() => handleReligion('muslim')}
+          >
             Мусульманские
           </button>
-          <button className={`${styles.religionTab} ${styles.religionTabDisabled}`} disabled>
+          <button
+            className={
+              religion === 'christian'
+                ? `${styles.religionTab} ${styles.religionTabActive}`
+                : styles.religionTab
+            }
+            onClick={() => handleReligion('christian')}
+          >
             Христианские
-            <span className={styles.comingSoon}>скоро</span>
           </button>
         </div>
 
         {/* Collection sub-filter */}
         <div className={inView ? `${styles.subFilter} ${styles.visible}` : styles.subFilter}>
-          {COLLECTIONS.map(col => (
+          {currentCollections.map(col => (
             <button
               key={col.key}
               className={
@@ -213,9 +339,7 @@ export default function Catalog() {
             >
               {col.label}
               <span className={styles.subBtnCount}>
-                {col.key === 'all'
-                  ? ALL_ITEMS.length
-                  : ALL_ITEMS.filter(i => i.collection === col.key).length}
+                {itemCount(religion, col.key)}
               </span>
             </button>
           ))}
