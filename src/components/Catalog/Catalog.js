@@ -280,7 +280,7 @@ function Modal({ item, onClose }) {
             Уточните стоимость у нашего специалиста.
           </p>
           <a
-            href="https://wa.me/77052221016"
+            href="https://wa.me/77759962343"
             className={styles.modalBtnWa}
             target="_blank"
             rel="noopener noreferrer"

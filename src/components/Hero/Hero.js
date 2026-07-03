@@ -19,8 +19,7 @@ export default function Hero() {
             Память,<br />воплощённая<br />в камне
           </h1>
           <p className={styles.subtitle}>
-            Изготавливаем памятники из натурального гранита.<br />
-            Собственное производство, полный цикл работ.
+            Создаём пространство для диалога поколений
           </p>
           <div className={styles.actions}>
             <a href="#catalog" className={styles.btnPrimary}>
@@ -30,7 +29,7 @@ export default function Hero() {
               Получить консультацию
             </a>
             <a
-              href="https://wa.me/77052221016"
+              href="https://wa.me/77759962343"
               className={styles.btnWa}
               target="_blank"
               rel="noopener noreferrer"

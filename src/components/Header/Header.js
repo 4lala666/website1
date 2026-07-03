@@ -59,8 +59,8 @@ export default function Header() {
               </a>
             ))}
           </nav>
-          <a href="tel:+77052221016" className={styles.phone}>
-            +7 (705) 222-10-16
+          <a href="tel:+77759962343" className={styles.phone}>
+            +7 775 996 2343
           </a>
           <a href="#contacts" className={styles.cta}>
             Оставить заявку
@@ -87,8 +87,8 @@ export default function Header() {
             </a>
           ))}
         </nav>
-        <a href="tel:+77052221016" className={styles.mobilePhone}>
-          +7 (705) 222-10-16
+        <a href="tel:+77759962343" className={styles.mobilePhone}>
+          +7 775 996 2343
         </a>
         <a href="#contacts" className={styles.mobileCta} onClick={closeMenu}>
           Оставить заявку

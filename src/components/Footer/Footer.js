@@ -24,11 +24,10 @@ export default function Footer() {
           <div className={styles.brand}>
             <span className={styles.logo}>M-GRANITE</span>
             <p className={styles.tagline}>
-              Памятники из натурального гранита<br />
-              в Алматы с 2007 года
+              Создаём пространство для диалога поколений
             </p>
             <div className={styles.contacts}>
-              <a href="tel:+77052221016" className={styles.contactLink}>+7 (705) 222-10-16</a>
+              <a href="tel:+77759962343" className={styles.contactLink}>+7 775 996 2343</a>
               <a href="mailto:info@mgranite.kz" className={styles.contactLink}>info@mgranite.kz</a>
               <span className={styles.address}>г. Алматы, ул. Илтипат, 51</span>
               <span className={styles.hours}>Ежедневно 09:00 — 18:00</span>

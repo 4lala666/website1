@@ -45,7 +45,7 @@ export default function ContactForm() {
               </div>
               <div className={styles.contactItem}>
                 <span className={styles.contactLabel}>Телефон</span>
-                <a href="tel:+77052221016" className={styles.contactLink}>+7 (705) 222-10-16</a>
+                <a href="tel:+77759962343" className={styles.contactLink}>+7 775 996 2343</a>
               </div>
               <div className={styles.contactItem}>
                 <span className={styles.contactLabel}>Email</span>
@@ -57,7 +57,7 @@ export default function ContactForm() {
               </div>
             </div>
             <a
-              href="https://wa.me/77052221016"
+              href="https://wa.me/77759962343"
               className={styles.waBtn}
               target="_blank"
               rel="noopener noreferrer"
