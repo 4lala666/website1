@@ -35,6 +35,37 @@ function makeMuslimItems(collectionKey, files) {
   }));
 }
 
+// ── Metal products data ───────────────────────────────────────────────────────
+
+const METAL_FOLDER = 'Изделия из металла';
+
+function metalUrl(filename) {
+  return '/images/catalog/' + encodeURIComponent(METAL_FOLDER) + '/' + encodeURIComponent(filename);
+}
+
+// Exact filenames in numeric order
+const METAL_FILES = [
+  '1.jpg',
+  '2.jpg',
+  '3_pages-to-jpg-0001.jpg',
+  '4_pages-to-jpg-0001.jpg',
+  '5_page-0001.jpg',
+  '6_page-0001.jpg',
+  '7_page-0001.jpg',
+  '8_page-0001.jpg',
+  '9_page-0001.jpg',
+  '10_page-0001.jpg',
+];
+
+const METAL_ITEMS = METAL_FILES.map((filename, i) => ({
+  id:             `metal-${i + 1}`,
+  religion:       'metal',
+  collection:     'all',
+  collectionName: 'Изделия из металла',
+  formNum:        `М-${String(i + 1).padStart(3, '0')}`,
+  image:          metalUrl(filename),
+}));
+
 // ── Christian data ────────────────────────────────────────────────────────────
 
 // Folder name starts with Cyrillic "с" (U+0441), not Latin "c"
@@ -127,6 +158,7 @@ const ALL_ITEMS = [
   ...makeXianItems('horizontal'),
   ...makeXianItems('children'),
   ...makeXianItems('family'),
+  ...METAL_ITEMS,
 ];
 
 // ── Filter config per religion ────────────────────────────────────────────────
@@ -144,6 +176,9 @@ const RELIGION_COLLECTIONS = {
     { key: 'horizontal', label: 'Горизонтальные' },
     { key: 'children',   label: 'Детские' },
     { key: 'family',     label: 'Семейные' },
+  ],
+  metal: [
+    { key: 'all', label: 'Все' },
   ],
 };
 
@@ -303,47 +338,46 @@ export default function Catalog() {
 
         {/* Religion tabs */}
         <div className={inView ? `${styles.religionTabs} ${styles.visible}` : styles.religionTabs}>
-          <button
-            className={
-              religion === 'muslim'
-                ? `${styles.religionTab} ${styles.religionTabActive}`
-                : styles.religionTab
-            }
-            onClick={() => handleReligion('muslim')}
-          >
-            Мусульманские
-          </button>
-          <button
-            className={
-              religion === 'christian'
-                ? `${styles.religionTab} ${styles.religionTabActive}`
-                : styles.religionTab
-            }
-            onClick={() => handleReligion('christian')}
-          >
-            Христианские
-          </button>
-        </div>
-
-        {/* Collection sub-filter */}
-        <div className={inView ? `${styles.subFilter} ${styles.visible}` : styles.subFilter}>
-          {currentCollections.map(col => (
+          {[
+            { key: 'muslim',    label: 'Мусульманские' },
+            { key: 'christian', label: 'Христианские' },
+            { key: 'metal',     label: 'Изделия из металла' },
+          ].map(tab => (
             <button
-              key={col.key}
+              key={tab.key}
               className={
-                collection === col.key
-                  ? `${styles.subBtn} ${styles.subBtnActive}`
-                  : styles.subBtn
+                religion === tab.key
+                  ? `${styles.religionTab} ${styles.religionTabActive}`
+                  : styles.religionTab
               }
-              onClick={() => setCollection(col.key)}
+              onClick={() => handleReligion(tab.key)}
             >
-              {col.label}
-              <span className={styles.subBtnCount}>
-                {itemCount(religion, col.key)}
-              </span>
+              {tab.label}
             </button>
           ))}
         </div>
+
+        {/* Collection sub-filter — hidden when there are no sub-categories */}
+        {currentCollections.length > 1 && (
+          <div className={inView ? `${styles.subFilter} ${styles.visible}` : styles.subFilter}>
+            {currentCollections.map(col => (
+              <button
+                key={col.key}
+                className={
+                  collection === col.key
+                    ? `${styles.subBtn} ${styles.subBtnActive}`
+                    : styles.subBtn
+                }
+                onClick={() => setCollection(col.key)}
+              >
+                {col.label}
+                <span className={styles.subBtnCount}>
+                  {itemCount(religion, col.key)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Product grid */}
         <div className={styles.grid}>
@@ -355,14 +389,14 @@ export default function Catalog() {
               aria-label={`${item.collectionName} — Форма ${item.formNum}`}
             >
               <div className={
-                item.religion === 'christian'
+                item.religion !== 'muslim'
                   ? `${styles.cardImgWrap} ${styles.cardImgWrapContain}`
                   : styles.cardImgWrap
               }>
                 <ProductImage
                   src={item.image}
                   alt={`${item.collectionName} ${item.formNum}`}
-                  className={item.religion === 'christian' ? styles.cardImgContain : undefined}
+                  className={item.religion !== 'muslim' ? styles.cardImgContain : undefined}
                 />
               </div>
               <div className={styles.cardMeta}>
