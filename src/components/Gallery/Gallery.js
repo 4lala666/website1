@@ -40,6 +40,7 @@ export default function Gallery() {
 
   return (
     <section className={styles.section}>
+
       <div className={styles.head}>
         <div className={styles.container}>
           <h2 className={styles.title}>Галерея работ</h2>
@@ -47,47 +48,50 @@ export default function Gallery() {
         </div>
       </div>
 
-      <div className={styles.sliderWrap}>
-        {/* Slides */}
-        <div className={styles.track}>
-          {slides.map((slide, i) => (
-            <div
-              key={i}
-              className={
-                i === current
-                  ? `${styles.slide} ${styles.slideActive}`
-                  : `${styles.slide}`
-              }
-              aria-hidden={i !== current}
-            >
-              <div className={styles.slidePlaceholder}>
-                <img
-                  src={slide.src}
-                  alt={slide.label}
-                  className={styles.slideImg}
-                  loading="lazy"
-                />
-              </div>
-              <div className={styles.slideCaption}>
-                <p className={styles.captionText}>{slide.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className={styles.sliderOuter}>
 
-        {/* Prev / Next */}
-        <button className={`${styles.navBtn} ${styles.navPrev}`} onClick={prevSlide} aria-label="Предыдущий">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </button>
-        <button className={`${styles.navBtn} ${styles.navNext}`} onClick={next} aria-label="Следующий">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
+        {/* [←]  card  [→] */}
+        <div className={styles.sliderLayout}>
+
+          <button className={styles.navBtn} onClick={prevSlide} aria-label="Предыдущий">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          <div className={styles.card}>
+            <div className={styles.track}>
+              {slides.map((slide, i) => (
+                <div
+                  key={i}
+                  className={
+                    i === current
+                      ? `${styles.slide} ${styles.slideActive}`
+                      : styles.slide
+                  }
+                  aria-hidden={i !== current}
+                >
+                  <img
+                    src={slide.src}
+                    alt={slide.label}
+                    className={styles.slideImg}
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+            <p className={styles.caption}>{slides[current].desc}</p>
+          </div>
+
+          <button className={styles.navBtn} onClick={next} aria-label="Следующий">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+
+        </div>
 
         {/* Dots */}
         <div className={styles.dots}>
@@ -100,6 +104,7 @@ export default function Gallery() {
             />
           ))}
         </div>
+
       </div>
     </section>
   );
