@@ -2,12 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './Gallery.module.css';
 
 const slides = [
-  { label: 'Гранитный памятник', desc: 'Классический вертикальный, гранит «Чёрный Индийский»' },
-  { label: 'Мемориальный комплекс', desc: 'Семейный комплекс с обрамлением и вазами' },
-  { label: 'Фигурный памятник', desc: 'Индивидуальный дизайн с гравировкой портрета' },
-  { label: 'Мусульманский памятник', desc: 'Гранит «Ясень», гравировка арабской вязью' },
-  { label: 'Двойной памятник', desc: 'Гранит «Габбро-Диабаз», полный цикл установки' },
-  { label: 'Гранитное обрамление', desc: 'Благоустройство захоронения под ключ' },
+  { src: '/images/gallery/gallery-01.webp', label: 'Гранитный памятник',     desc: 'Классический вертикальный, гранит «Чёрный Индийский»'   },
+  { src: '/images/gallery/gallery-02.webp', label: 'Мемориальный комплекс',  desc: 'Семейный комплекс с обрамлением и вазами'              },
+  { src: '/images/gallery/gallery-03.webp', label: 'Фигурный памятник',      desc: 'Индивидуальный дизайн с гравировкой портрета'           },
+  { src: '/images/gallery/gallery-04.webp', label: 'Мусульманский памятник', desc: 'Гранит «Ясень», гравировка арабской вязью'              },
+  { src: '/images/gallery/gallery-05.webp', label: 'Двойной памятник',       desc: 'Гранит «Габбро-Диабаз», полный цикл установки'          },
+  { src: '/images/gallery/gallery-06.webp', label: 'Гранитное обрамление',   desc: 'Благоустройство захоронения под ключ'                   },
+  { src: '/images/gallery/gallery-07.webp', label: 'Гранитный памятник',     desc: 'Вертикальный памятник с портретной гравировкой'         },
+  { src: '/images/gallery/gallery-08.webp', label: 'Мемориальный комплекс',  desc: 'Комплекс с цоколем и гранитным обрамлением'             },
+  { src: '/images/gallery/gallery-09.webp', label: 'Христианский памятник',  desc: 'Крест с цоколем, гранит «Дымовский»'                    },
+  { src: '/images/gallery/gallery-10.webp', label: 'Детский памятник',       desc: 'Мягкие формы, розовый гранит «Лезники»'                 },
+  { src: '/images/gallery/gallery-11.webp', label: 'Двойной комплекс',       desc: 'Горизонтальный, семейный, гранит «Габбро»'              },
+  { src: '/images/gallery/gallery-12.webp', label: 'Фигурный памятник',      desc: 'Арочный силуэт с рельефным орнаментом'                  },
+  { src: '/images/gallery/gallery-13.webp', label: 'Гранитное обрамление',   desc: 'Полное благоустройство, плитка и цветники'              },
 ];
 
 export default function Gallery() {
@@ -54,7 +61,12 @@ export default function Gallery() {
               aria-hidden={i !== current}
             >
               <div className={styles.slidePlaceholder}>
-                <span className={styles.placeholderLabel}>{slide.label}</span>
+                <img
+                  src={slide.src}
+                  alt={slide.label}
+                  className={styles.slideImg}
+                  loading="lazy"
+                />
               </div>
               <div className={styles.slideCaption}>
                 <p className={styles.captionText}>{slide.desc}</p>
