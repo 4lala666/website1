@@ -39,7 +39,7 @@ export default function Gallery() {
   }
 
   return (
-    <section className={styles.section}>
+    <section id="gallery" className={styles.section}>
 
       <div className={styles.head}>
         <div className={styles.container}>

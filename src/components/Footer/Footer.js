@@ -91,15 +91,31 @@ const socials = [
 const navCols = [
   {
     title: 'Каталог',
-    links: ['Памятники', 'Мемориальные комплексы', 'Обрамление', 'Доставка и установка'],
+    links: [
+      { label: 'Памятники',              href: '#catalog' },
+      { label: 'Мемориальные комплексы', href: '#gallery' },
+      { label: 'Изделия из металла',     href: '#catalog' },
+      { label: 'Доставка и установка',   href: '#how-we-work' },
+    ],
   },
   {
     title: 'Компания',
-    links: ['О нас', 'Производство', 'Гарантии', 'Контакты'],
+    links: [
+      { label: 'О нас',        href: '#advantages' },
+      { label: 'Производство', href: '#how-we-work' },
+      { label: 'Гарантии',     href: '#advantages' },
+      { label: 'Контакты',     href: '#contacts' },
+    ],
   },
   {
-    title: 'Помощь',
-    links: ['Как выбрать памятник', 'Фото и гравировка', 'Оплата и рассрочка', 'Частые вопросы'],
+    title: 'Информация',
+    links: [
+      { label: 'Как выбрать памятник', href: '#how-we-work' },
+      { label: 'Материалы',            href: '#catalog' },
+      { label: 'Этапы работы',         href: '#how-we-work' },
+      { label: 'Доставка и установка', href: '#how-we-work' },
+      { label: 'Частые вопросы',       href: '#contacts' },
+    ],
   },
 ];
 
@@ -153,8 +169,8 @@ export default function Footer() {
               <h4 className={styles.colTitle}>{col.title}</h4>
               <ul className={styles.colList}>
                 {col.links.map(link => (
-                  <li key={link}>
-                    <a href="#catalog" className={styles.colLink}>{link}</a>
+                  <li key={link.label}>
+                    <a href={link.href} className={styles.colLink}>{link.label}</a>
                   </li>
                 ))}
               </ul>

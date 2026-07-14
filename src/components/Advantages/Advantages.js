@@ -62,7 +62,7 @@ const items = [
 export default function Advantages() {
   const [ref, inView] = useInView(0.08);
   return (
-    <section className={styles.section} ref={ref}>
+    <section id="advantages" className={styles.section} ref={ref}>
       <div className={styles.container}>
         <div className={inView ? `${styles.head} ${styles.visible}` : styles.head}>
           <h2 className={styles.title}>Почему выбирают нас</h2>

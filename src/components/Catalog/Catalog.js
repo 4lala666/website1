@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useInView } from '../../hooks/useInView';
+import { useSearch } from '../../context/SearchContext';
 import styles from './Catalog.module.css';
 
 // ── Muslim data ───────────────────────────────────────────────────────────────
@@ -43,7 +44,6 @@ function metalUrl(filename) {
   return '/images/catalog/' + encodeURIComponent(METAL_FOLDER) + '/' + encodeURIComponent(filename);
 }
 
-// Exact filenames in numeric order
 const METAL_FILES = [
   '1.jpg',
   '2.jpg',
@@ -188,6 +188,16 @@ function itemCount(rel, col) {
   ).length;
 }
 
+function pluralItems(n) {
+  if (n % 100 >= 11 && n % 100 <= 19) return 'моделей';
+  const r = n % 10;
+  if (r === 1) return 'модель';
+  if (r >= 2 && r <= 4) return 'модели';
+  return 'моделей';
+}
+
+const ITEMS_PER_PAGE = 8;
+
 // ── Image with 404 fallback ───────────────────────────────────────────────────
 
 function ProductImage({ src, alt, className }) {
@@ -299,27 +309,119 @@ function Modal({ item, onClose }) {
   );
 }
 
+// ── Pagination ────────────────────────────────────────────────────────────────
+
+function Pagination({ page, totalPages, onChange }) {
+  if (totalPages <= 1) return null;
+
+  const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+  const end = Math.min(totalPages, start + 4);
+  const pages = [];
+  for (let i = start; i <= end; i++) pages.push(i);
+
+  return (
+    <nav className={styles.pagination} aria-label="Навигация по страницам каталога">
+      <button
+        className={styles.pageBtn}
+        onClick={() => onChange(page - 1)}
+        disabled={page === 1}
+        aria-label="Предыдущая страница"
+      >
+        ←
+      </button>
+
+      {start > 1 && (
+        <>
+          <button className={styles.pageNum} onClick={() => onChange(1)}>1</button>
+          {start > 2 && <span className={styles.pageEllipsis}>…</span>}
+        </>
+      )}
+
+      {pages.map(p => (
+        <button
+          key={p}
+          className={p === page ? `${styles.pageNum} ${styles.pageNumActive}` : styles.pageNum}
+          onClick={() => onChange(p)}
+          aria-current={p === page ? 'page' : undefined}
+        >
+          {p}
+        </button>
+      ))}
+
+      {end < totalPages && (
+        <>
+          {end < totalPages - 1 && <span className={styles.pageEllipsis}>…</span>}
+          <button className={styles.pageNum} onClick={() => onChange(totalPages)}>{totalPages}</button>
+        </>
+      )}
+
+      <button
+        className={styles.pageBtn}
+        onClick={() => onChange(page + 1)}
+        disabled={page === totalPages}
+        aria-label="Следующая страница"
+      >
+        →
+      </button>
+    </nav>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function Catalog() {
-  const [ref, inView]               = useInView(0.05);
-  const [religion, setReligion]     = useState('muslim');
-  const [collection, setCollection] = useState('all');
-  const [modalItem, setModalItem]   = useState(null);
+  const [ref, inView]                 = useInView(0.05);
+  const [religion, setReligion]       = useState('muslim');
+  const [collection, setCollection]   = useState('all');
+  const [modalItem, setModalItem]     = useState(null);
+  const [page, setPage]               = useState(1);
+  const [filterStuck, setFilterStuck] = useState(false);
+  const sentinelRef                   = useRef(null);
+  const { query }                     = useSearch();
 
   const currentCollections = RELIGION_COLLECTIONS[religion];
 
-  const filtered = useMemo(
-    () => ALL_ITEMS.filter(item =>
+  // Search narrows results within the active religion + collection filter
+  const filtered = useMemo(() => {
+    const base = ALL_ITEMS.filter(item =>
       item.religion === religion &&
       (collection === 'all' || item.collection === collection)
-    ),
-    [religion, collection]
-  );
+    );
+    const q = query.trim().toLowerCase();
+    if (!q) return base;
+    return base.filter(item =>
+      item.formNum.toLowerCase().includes(q) ||
+      item.collectionName.toLowerCase().includes(q) ||
+      item.collection.toLowerCase().includes(q)
+    );
+  }, [religion, collection, query]);
+
+  // Reset to page 1 whenever the result set changes
+  useEffect(() => { setPage(1); }, [religion, collection, query]);
+
+  // Detect when the filter bar becomes sticky via sentinel IntersectionObserver
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setFilterStuck(!entry.isIntersecting),
+      { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const pagedItems = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   function handleReligion(rel) {
     setReligion(rel);
     setCollection('all');
+  }
+
+  function handlePageChange(newPage) {
+    setPage(newPage);
+    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   return (
@@ -330,82 +432,112 @@ export default function Catalog() {
 
       <div className={styles.container}>
 
-        {/* Header */}
+        {/* Section heading */}
         <div className={inView ? `${styles.head} ${styles.visible}` : styles.head}>
           <h2 className={styles.sectionTitle}>Каталог памятников</h2>
           <p className={styles.sectionSub}>Выберите форму и получите консультацию</p>
         </div>
 
-        {/* Religion tabs */}
-        <div className={inView ? `${styles.religionTabs} ${styles.visible}` : styles.religionTabs}>
-          {[
-            { key: 'muslim',    label: 'Мусульманские' },
-            { key: 'christian', label: 'Христианские' },
-            { key: 'metal',     label: 'Изделия из металла' },
-          ].map(tab => (
-            <button
-              key={tab.key}
-              className={
-                religion === tab.key
-                  ? `${styles.religionTab} ${styles.religionTabActive}`
-                  : styles.religionTab
-              }
-              onClick={() => handleReligion(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* Sentinel — zero-height element that triggers sticky shadow when it scrolls past the header */}
+        <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
 
-        {/* Collection sub-filter — hidden when there are no sub-categories */}
-        {currentCollections.length > 1 && (
-          <div className={inView ? `${styles.subFilter} ${styles.visible}` : styles.subFilter}>
-            {currentCollections.map(col => (
+        {/* Sticky filter bar */}
+        <div className={filterStuck ? `${styles.filterBar} ${styles.filterBarStuck}` : styles.filterBar}>
+
+          {/* Religion tabs */}
+          <div className={inView ? `${styles.religionTabs} ${styles.visible}` : styles.religionTabs}>
+            {[
+              { key: 'muslim',    label: 'Мусульманские' },
+              { key: 'christian', label: 'Христианские' },
+              { key: 'metal',     label: 'Изделия из металла' },
+            ].map(tab => (
               <button
-                key={col.key}
+                key={tab.key}
                 className={
-                  collection === col.key
-                    ? `${styles.subBtn} ${styles.subBtnActive}`
-                    : styles.subBtn
+                  religion === tab.key
+                    ? `${styles.religionTab} ${styles.religionTabActive}`
+                    : styles.religionTab
                 }
-                onClick={() => setCollection(col.key)}
+                onClick={() => handleReligion(tab.key)}
               >
-                {col.label}
-                <span className={styles.subBtnCount}>
-                  {itemCount(religion, col.key)}
-                </span>
+                {tab.label}
               </button>
             ))}
           </div>
+
+          {/* Collection sub-filter — hidden for single-category tabs */}
+          {currentCollections.length > 1 && (
+            <div className={inView ? `${styles.subFilter} ${styles.visible}` : styles.subFilter}>
+              {currentCollections.map(col => (
+                <button
+                  key={col.key}
+                  className={
+                    collection === col.key
+                      ? `${styles.subBtn} ${styles.subBtnActive}`
+                      : styles.subBtn
+                  }
+                  onClick={() => setCollection(col.key)}
+                >
+                  {col.label}
+                  <span className={styles.subBtnCount}>
+                    {itemCount(religion, col.key)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+        </div>
+
+        {/* Search results hint */}
+        {query.trim() && (
+          <p className={styles.searchHint}>
+            По запросу <strong>«{query}»</strong>: {filtered.length} {pluralItems(filtered.length)}
+          </p>
         )}
 
-        {/* Product grid */}
-        <div className={styles.grid}>
-          {filtered.map(item => (
-            <button
-              key={item.id}
-              className={inView ? `${styles.card} ${styles.cardVisible}` : styles.card}
-              onClick={() => setModalItem(item)}
-              aria-label={`${item.collectionName} — Форма ${item.formNum}`}
-            >
-              <div className={
-                item.religion !== 'muslim'
-                  ? `${styles.cardImgWrap} ${styles.cardImgWrapContain}`
-                  : styles.cardImgWrap
-              }>
-                <ProductImage
-                  src={item.image}
-                  alt={`${item.collectionName} ${item.formNum}`}
-                  className={item.religion !== 'muslim' ? styles.cardImgContain : undefined}
-                />
-              </div>
-              <div className={styles.cardMeta}>
-                <span className={styles.cardCollection}>{item.collectionName}</span>
-                <span className={styles.cardForm}>Форма {item.formNum}</span>
-              </div>
-            </button>
-          ))}
-        </div>
+        {/* Product grid or empty state */}
+        {pagedItems.length > 0 ? (
+          <div className={styles.grid}>
+            {pagedItems.map(item => (
+              <button
+                key={item.id}
+                className={inView ? `${styles.card} ${styles.cardVisible}` : styles.card}
+                onClick={() => setModalItem(item)}
+                aria-label={`${item.collectionName} — Форма ${item.formNum}`}
+              >
+                <div className={
+                  item.religion !== 'muslim'
+                    ? `${styles.cardImgWrap} ${styles.cardImgWrapContain}`
+                    : styles.cardImgWrap
+                }>
+                  <ProductImage
+                    src={item.image}
+                    alt={`${item.collectionName} ${item.formNum}`}
+                    className={item.religion !== 'muslim' ? styles.cardImgContain : undefined}
+                  />
+                </div>
+                <div className={styles.cardMeta}>
+                  <span className={styles.cardCollection}>{item.collectionName}</span>
+                  <span className={styles.cardForm}>Форма {item.formNum}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.emptyState}>
+            <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+              strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <p className={styles.emptyText}>По вашему запросу ничего не найдено.</p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        <Pagination page={page} totalPages={totalPages} onChange={handlePageChange} />
 
       </div>
     </section>

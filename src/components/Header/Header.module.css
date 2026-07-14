@@ -41,6 +41,18 @@
   display: block;
 }
 
+.logoText {
+  font-family: 'Cormorant Garamond', var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #222222;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  line-height: 1;
+  margin-left: 0.65rem;
+  user-select: none;
+}
+
 /* ── Search ── */
 
 .searchWrap {
@@ -264,4 +276,9 @@
   .inner { padding: 0 1.25rem; }
   .searchWrap { display: none; }
   .inner { grid-template-columns: auto auto; }
+  .logoText { font-size: 1rem; }
+}
+
+@media (max-width: 380px) {
+  .logoText { display: none; }
 }

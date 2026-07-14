@@ -39,6 +39,26 @@
   color: var(--text-muted);
 }
 
+/* ── Sentinel ────────────────────────────────────────── */
+
+.sentinel { height: 0; }
+
+/* ── Sticky filter bar ───────────────────────────────── */
+
+.filterBar {
+  position: sticky;
+  top: 72px;
+  z-index: 100;
+  background: var(--bg-alt);
+  margin: 0 -2rem;
+  padding: 0 2rem;
+  transition: box-shadow 0.25s ease;
+}
+
+.filterBarStuck {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
 /* ── Religion tabs ───────────────────────────────────── */
 
 .religionTabs {
@@ -107,7 +127,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.6s ease 0.18s, transform 0.6s ease 0.18s;
@@ -472,9 +492,132 @@
   .container { padding: 0 1.25rem; }
 }
 
+@media (max-width: 768px) {
+  .filterBar { margin: 0 -1.25rem; padding: 0 1.25rem; }
+}
+
 @media (max-width: 480px) {
   .grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
   .religionTab { padding: 0.65rem 1rem; font-size: 0.82rem; }
   .subBtn { font-size: 0.8rem; padding: 0.45rem 0.9rem; }
   .backdrop { padding: 0.75rem; }
+}
+
+/* ── Search hint ─────────────────────────────────────── */
+
+.searchHint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.searchHint strong {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+/* ── Empty state ─────────────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--text-dim);
+}
+
+.emptyText {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* ── Pagination ──────────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  padding: 0 0.5rem;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.pageBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pageNum {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  padding: 0 0.5rem;
+}
+
+.pageNum:hover {
+  border-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.pageNumActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+
+.pageNumActive:hover {
+  color: #fff;
+}
+
+.pageEllipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2.5rem;
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  pointer-events: none;
+  user-select: none;
 }

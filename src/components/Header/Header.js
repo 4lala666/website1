@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useSearch } from '../../context/SearchContext';
 import styles from './Header.module.css';
 
 const navLinks = [
   { label: 'Каталог', href: '#catalog' },
   { label: 'О компании', href: '#about' },
   { label: 'Памятники', href: '#catalog' },
-  { label: 'Комплексы', href: '#catalog' },
+  { label: 'Комплексы', href: '#gallery' },
   { label: 'Контакты', href: '#contacts' },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const { query, setQuery } = useSearch();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -27,8 +28,9 @@ export default function Header() {
       <div className={styles.inner}>
 
         {/* Logo */}
-        <a href="/" className={styles.logo}>
-          <img src="/images/logo-icon.png" alt="Sezim Stone" className={styles.logoImg} />
+        <a href="/" className={styles.logo} aria-label="Sezim Stone — на главную">
+          <img src="/images/logo-icon.png" alt="" className={styles.logoImg} aria-hidden="true" />
+          <span className={styles.logoText}>Sezim Stone</span>
         </a>
 
         {/* Search — center */}
@@ -45,8 +47,8 @@ export default function Header() {
             type="search"
             className={styles.searchInput}
             placeholder="Поиск по каталогу..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
           />
         </div>
 
