@@ -28,7 +28,7 @@ export default function Header() {
 
         {/* Logo */}
         <a href="/" className={styles.logo}>
-          <img src="/images/logo.png" alt="Sezim Stone" className={styles.logoImg} />
+          <img src="/images/logo-icon.png" alt="Sezim Stone" className={styles.logoImg} />
         </a>
 
         {/* Search — center */}

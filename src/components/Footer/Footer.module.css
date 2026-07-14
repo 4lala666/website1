@@ -24,15 +24,15 @@
 .brand { display: flex; flex-direction: column; gap: 1.25rem; }
 
 .logoImg {
-  height: 50px;
-  width: auto;
+  width: 200px;
+  height: auto;
   display: block;
 }
 
 .tagline {
   font-size: 0.875rem;
   line-height: 1.65;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.7);
 }
 
 .contacts {
