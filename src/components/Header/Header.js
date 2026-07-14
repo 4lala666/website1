@@ -28,7 +28,7 @@ export default function Header() {
 
         {/* Logo */}
         <a href="/" className={styles.logo}>
-          <span className={styles.logoText}>M-GRANITE</span>
+          <img src="/images/logo.png" alt="Sezim Stone" className={styles.logoImg} />
         </a>
 
         {/* Search — center */}

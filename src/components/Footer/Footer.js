@@ -22,7 +22,7 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            <span className={styles.logo}>M-GRANITE</span>
+            <img src="/images/logo.png" alt="Sezim Stone" className={styles.logoImg} />
             <p className={styles.tagline}>
               Создаём пространство для диалога поколений
             </p>
@@ -47,7 +47,7 @@ export default function Footer() {
           ))}
         </div>
         <div className={styles.bottom}>
-          <span className={styles.copy}>© 2025 M-Granite. Все права защищены.</span>
+          <span className={styles.copy}>© 2025 Sezim Stone. Все права защищены.</span>
           <div className={styles.legal}>
             <a href="#contacts" className={styles.legalLink}>Политика конфиденциальности</a>
             <a href="#contacts" className={styles.legalLink}>Оферта</a>

@@ -6,7 +6,7 @@ export default function Hero() {
     <section className={styles.hero}>
       <img
         src="/images/hero.jpg"
-        alt="Памятники из гранита — M-Granite Алматы"
+        alt="Памятники из гранита — Sezim Stone Алматы"
         className={styles.heroBg}
       />
       <div className={styles.overlay} aria-hidden="true" />

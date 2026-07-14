@@ -30,12 +30,10 @@
 
 .logo { text-decoration: none; }
 
-.logoText {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  color: var(--text-dark);
-  text-transform: uppercase;
+.logoImg {
+  height: 55px;
+  width: auto;
+  display: block;
 }
 
 /* ── Search ── */

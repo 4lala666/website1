@@ -67,7 +67,7 @@ export default function ContactForm() {
             </a>
             <div className={styles.mapWrap}>
               <iframe
-                title="M-Granite на карте"
+                title="Sezim Stone на карте"
                 className={styles.map}
                 src="https://maps.google.com/maps?q=Алматы,+ул.+Илтипат,+51&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 allowFullScreen
