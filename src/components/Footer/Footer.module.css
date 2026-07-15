@@ -47,13 +47,14 @@
 }
 
 .tagline {
-  font-family: var(--font-serif);
-  font-size: 0.925rem;
+  font-family: 'Cormorant Garamond', var(--font-serif);
+  font-size: 1.06rem;
   font-weight: 400;
   font-style: italic;
-  line-height: 1.85;
-  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
   letter-spacing: 0.01em;
+  max-width: 240px;
 }
 
 /* ── Contact list ─────────────────────────────────────────────────────── */
