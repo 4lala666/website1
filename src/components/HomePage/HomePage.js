@@ -10,6 +10,8 @@ import Reviews from '../Reviews/Reviews';
 import ContactForm from '../ContactForm/ContactForm';
 import Footer from '../Footer/Footer';
 
+const SHOW_REVIEWS = false;
+
 export default function HomePage() {
   return (
     <>
@@ -21,7 +23,7 @@ export default function HomePage() {
         <Catalog />
         <Gallery />
         <HowWeWork />
-        <Reviews />
+        {SHOW_REVIEWS && <Reviews />}
         <ContactForm />
       </main>
       <Footer />
