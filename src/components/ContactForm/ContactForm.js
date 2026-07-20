@@ -2,28 +2,58 @@ import React, { useState } from 'react';
 import { useInView } from '../../hooks/useInView';
 import styles from './ContactForm.module.css';
 
-const TG_TOKEN   = process.env.REACT_APP_TELEGRAM_BOT_TOKEN;
-const TG_CHAT_ID = process.env.REACT_APP_TELEGRAM_CHAT_ID;
+// ── Rate limiting (sliding window, localStorage) ──────────────────────────────
+// Applies the sliding window algorithm from the rate-limiting skill,
+// adapted for client-side use (no Redis — acceptable for a contact form).
 
-async function sendToTelegram({ name, phone, comment }) {
-  const text =
-    `🔔 Новая заявка с сайта Sezim Stone\n` +
-    `👤 Имя: ${name}\n` +
-    `📞 Телефон: ${phone}\n` +
-    `💬 Комментарий: ${comment || '—'}`;
+const RL_KEY        = 'sezim_form_rl';
+const RL_MAX        = 3;
+const RL_WINDOW_MS  = 10 * 60 * 1000; // 10 minutes
 
-  const res = await fetch(
-    `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT_ID, text }),
+function checkRateLimit() {
+  try {
+    const now    = Date.now();
+    const stored = JSON.parse(localStorage.getItem(RL_KEY) || '[]');
+    // Sliding window: keep only timestamps within the last 10 min
+    const recent = stored.filter(ts => now - ts < RL_WINDOW_MS);
+
+    if (recent.length >= RL_MAX) {
+      const oldest     = Math.min(...recent);
+      const resetInMin = Math.ceil((oldest + RL_WINDOW_MS - now) / 60000);
+      return { allowed: false, resetInMin };
     }
-  );
 
-  if (!res.ok) throw new Error(`Telegram API error: ${res.status}`);
-  return res.json();
+    recent.push(now);
+    localStorage.setItem(RL_KEY, JSON.stringify(recent));
+    return { allowed: true };
+  } catch {
+    // localStorage unavailable (e.g. private browsing) — allow the request
+    return { allowed: true };
+  }
 }
+
+// ── Input validation ──────────────────────────────────────────────────────────
+
+function validate({ name, phone, comment }) {
+  const errors = {};
+
+  if (!name.trim() || name.trim().length < 2) {
+    errors.name = 'Введите имя (минимум 2 символа)';
+  }
+
+  // Phone: starts with + or digit, followed by digits / spaces / dashes / parens
+  if (!/^[+\d][\d\s\-().]{4,18}$/.test(phone.trim())) {
+    errors.phone = 'Введите корректный номер (только цифры, +, пробелы)';
+  }
+
+  if (comment.length > 500) {
+    errors.comment = `Максимум 500 символов (сейчас ${comment.length})`;
+  }
+
+  return errors;
+}
+
+// ── WhatsApp icon ─────────────────────────────────────────────────────────────
 
 function WhatsAppIcon() {
   return (
@@ -33,22 +63,64 @@ function WhatsAppIcon() {
   );
 }
 
+// ── Component ─────────────────────────────────────────────────────────────────
+
+const EMPTY_FORM = { name: '', phone: '', comment: '', website: '' };
+
 export default function ContactForm() {
-  const [ref, inView] = useInView(0.1);
-  const [form, setForm]       = useState({ name: '', phone: '', comment: '' });
-  const [status, setStatus]   = useState('idle'); // idle | sending | success | error
+  const [ref, inView]     = useInView(0.1);
+  const [form, setForm]   = useState(EMPTY_FORM);
+  const [errors, setErrors]   = useState({});
+  // status: idle | sending | success | error | ratelimited
+  const [status, setStatus]   = useState('idle');
+  const [rlResetMin, setRlResetMin] = useState(0);
 
   function handleChange(e) {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+    // Clear field error on change
+    if (errors[name]) setErrors(prev => { const n = { ...prev }; delete n[name]; return n; });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setStatus('sending');
 
+    // 1. Honeypot — bots fill the hidden "website" field, humans never see it
+    if (form.website) return;
+
+    // 2. Client-side validation
+    const validationErrors = validate(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+
+    // 3. Sliding-window rate limit: max 3 submissions per device per 10 min
+    const rl = checkRateLimit();
+    if (!rl.allowed) {
+      setRlResetMin(rl.resetInMin);
+      setStatus('ratelimited');
+      return;
+    }
+
+    // 4. Send via Vercel serverless function (token never exposed to browser)
+    setStatus('sending');
     try {
-      await sendToTelegram(form);
-      setForm({ name: '', phone: '', comment: '' });
+      const res = await fetch('/api/send-telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    form.name.trim(),
+          phone:   form.phone.trim(),
+          comment: form.comment.trim(),
+          _hp:     form.website, // honeypot value forwarded for server-side check
+        }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      setForm(EMPTY_FORM);
       setStatus('success');
     } catch {
       setStatus('error');
@@ -57,14 +129,18 @@ export default function ContactForm() {
 
   function handleReset() {
     setStatus('idle');
+    setErrors({});
   }
+
+  const charCount   = form.comment.length;
+  const charOver    = charCount > 500;
 
   return (
     <section id="contacts" className={styles.section} ref={ref}>
       <div className={styles.container}>
         <div className={styles.layout}>
 
-          {/* Left: info */}
+          {/* ── Left: contact info ── */}
           <div className={inView ? `${styles.info} ${styles.visible}` : styles.info}>
             <h2 className={styles.title}>Свяжитесь с нами</h2>
             <p className={styles.sub}>
@@ -111,7 +187,7 @@ export default function ContactForm() {
             </div>
           </div>
 
-          {/* Right: form */}
+          {/* ── Right: form ── */}
           <div className={inView ? `${styles.formWrap} ${styles.visible}` : styles.formWrap}>
 
             {status === 'success' && (
@@ -152,54 +228,103 @@ export default function ContactForm() {
               </div>
             )}
 
+            {status === 'ratelimited' && (
+              <div className={styles.success}>
+                <div className={`${styles.successIcon} ${styles.errorIcon}`}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </div>
+                <h3 className={styles.successTitle}>Слишком много заявок</h3>
+                <p className={styles.successText}>
+                  Вы уже отправили {RL_MAX} заявки. Попробуйте через {rlResetMin} мин.
+                  <br />Или позвоните напрямую:
+                </p>
+                <a href="tel:+77759962343" className={styles.errorPhone}>
+                  +7 775 996 2343
+                </a>
+                <button className={styles.retryBtn} onClick={handleReset}>
+                  ← Назад к форме
+                </button>
+              </div>
+            )}
+
             {(status === 'idle' || status === 'sending') && (
-              <form className={styles.form} onSubmit={handleSubmit}>
+              <form className={styles.form} onSubmit={handleSubmit} noValidate>
                 <h3 className={styles.formTitle}>Получить консультацию</h3>
+
+                {/* Honeypot — visually hidden, never filled by real users */}
+                <div className={styles.honeypot} aria-hidden="true">
+                  <label htmlFor="cf-website">Website</label>
+                  <input
+                    id="cf-website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={handleChange}
+                  />
+                </div>
+
                 <div className={styles.group}>
                   <label className={styles.label} htmlFor="cf-name">Имя</label>
                   <input
                     id="cf-name"
                     name="name"
                     type="text"
-                    className={styles.input}
+                    className={errors.name ? `${styles.input} ${styles.inputError}` : styles.input}
                     placeholder="Ваше имя"
                     value={form.name}
                     onChange={handleChange}
-                    required
                     disabled={status === 'sending'}
+                    autoComplete="name"
                   />
+                  {errors.name && <span className={styles.fieldError}>{errors.name}</span>}
                 </div>
+
                 <div className={styles.group}>
                   <label className={styles.label} htmlFor="cf-phone">Телефон</label>
                   <input
                     id="cf-phone"
                     name="phone"
                     type="tel"
-                    className={styles.input}
+                    className={errors.phone ? `${styles.input} ${styles.inputError}` : styles.input}
                     placeholder="+7 (___) ___-__-__"
                     value={form.phone}
                     onChange={handleChange}
-                    required
                     disabled={status === 'sending'}
+                    autoComplete="tel"
                   />
+                  {errors.phone && <span className={styles.fieldError}>{errors.phone}</span>}
                 </div>
+
                 <div className={styles.group}>
-                  <label className={styles.label} htmlFor="cf-comment">Комментарий</label>
+                  <div className={styles.labelRow}>
+                    <label className={styles.label} htmlFor="cf-comment">Комментарий</label>
+                    <span className={charOver ? `${styles.charCount} ${styles.charCountOver}` : styles.charCount}>
+                      {charCount} / 500
+                    </span>
+                  </div>
                   <textarea
                     id="cf-comment"
                     name="comment"
-                    className={styles.textarea}
+                    className={errors.comment ? `${styles.textarea} ${styles.inputError}` : styles.textarea}
                     placeholder="Опишите, что вас интересует..."
                     value={form.comment}
                     onChange={handleChange}
                     rows={4}
                     disabled={status === 'sending'}
                   />
+                  {errors.comment && <span className={styles.fieldError}>{errors.comment}</span>}
                 </div>
+
                 <button
                   type="submit"
                   className={styles.submitBtn}
-                  disabled={status === 'sending'}
+                  disabled={status === 'sending' || charOver}
                 >
                   {status === 'sending' ? 'Отправляем...' : 'Получить консультацию'}
                 </button>
@@ -210,7 +335,6 @@ export default function ContactForm() {
             )}
 
           </div>
-
         </div>
       </div>
     </section>

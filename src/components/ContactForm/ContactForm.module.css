@@ -148,10 +148,29 @@
   color: var(--text-dark);
 }
 
+/* ── Honeypot — visually hidden from real users ── */
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  opacity: 0;
+  pointer-events: none;
+  tab-size: 0;
+}
+
+/* ── Form groups ── */
+
 .group {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
 }
 
 .label {
@@ -159,6 +178,31 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
+}
+
+/* ── Validation ── */
+
+.inputError {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.12) !important;
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: #e53e3e;
+  line-height: 1.4;
+}
+
+.charCount {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+  transition: color 0.2s ease;
+}
+
+.charCountOver {
+  color: #e53e3e;
+  font-weight: 500;
 }
 
 .input,
