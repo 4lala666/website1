@@ -33,6 +33,7 @@ function makeMuslimItems(collectionKey, files) {
     collectionName: name,
     formNum:        `${prefix}-${String(i + 1).padStart(3, '0')}`,
     image:          `/images/catalog/muslim/${folder}/${filename}`,
+    images:         null,
   }));
 }
 
@@ -64,6 +65,7 @@ const METAL_ITEMS = METAL_FILES.map((filename, i) => ({
   collectionName: 'Изделия из металла',
   formNum:        `М-${String(i + 1).padStart(3, '0')}`,
   image:          metalUrl(filename),
+  images:         null,
 }));
 
 // ── Christian data ────────────────────────────────────────────────────────────
@@ -145,8 +147,45 @@ function makeXianItems(collectionKey) {
     collectionName: name,
     formNum:        `${prefix}-${String(i + 1).padStart(3, '0')}`,
     image:          xianUrl(folder, filename),
+    images:         null,
   }));
 }
+
+// ── Complexes data ────────────────────────────────────────────────────────────
+
+const COMPLEXES_FOLDER = 'Комплексы';
+
+function complexUrl(filename) {
+  return (
+    '/images/catalog/' +
+    encodeURIComponent(COMPLEXES_FOLDER) +
+    '/' +
+    encodeURIComponent(filename)
+  );
+}
+
+// Each inner array = all angles of one complex. Files discovered from folder.
+const COMPLEX_GROUPS = [
+  ['kompleks1_1.jpg', 'kompleks1_2.jpg'],
+  ['kompleks2_1.jpg'],
+  ['kompleks3_1.jpg', 'kompleks3_2.jpg'],
+  ['kompleks4_1.jpg'],
+  ['kompleks5_1.jpg'],
+  ['kompleks6_1.jpg'],
+];
+
+const COMPLEX_ITEMS = COMPLEX_GROUPS.map((files, i) => {
+  const urls = files.map(f => complexUrl(f));
+  return {
+    id:             `complex-${i + 1}`,
+    religion:       'complex',
+    collection:     'all',
+    collectionName: 'Комплексы',
+    formNum:        `К-${String(i + 1).padStart(3, '0')}`,
+    image:          urls[0],
+    images:         urls,
+  };
+});
 
 // ── Combined item list ────────────────────────────────────────────────────────
 
@@ -159,6 +198,7 @@ const ALL_ITEMS = [
   ...makeXianItems('children'),
   ...makeXianItems('family'),
   ...METAL_ITEMS,
+  ...COMPLEX_ITEMS,
 ];
 
 // ── Filter config per religion ────────────────────────────────────────────────
@@ -178,6 +218,9 @@ const RELIGION_COLLECTIONS = {
     { key: 'family',     label: 'Семейные' },
   ],
   metal: [
+    { key: 'all', label: 'Все' },
+  ],
+  complex: [
     { key: 'all', label: 'Все' },
   ],
 };
@@ -239,10 +282,25 @@ function ProductImage({ src, alt, className }) {
 // ── Modal ─────────────────────────────────────────────────────────────────────
 
 function Modal({ item, onClose }) {
-  const handleKey = useCallback(
-    e => { if (e.key === 'Escape') onClose(); },
-    [onClose]
-  );
+  const gallery = item.images && item.images.length > 0 ? item.images : [item.image];
+  const hasGallery = gallery.length > 1;
+  const [photoIdx, setPhotoIdx] = useState(0);
+
+  const prev = useCallback(e => {
+    e.stopPropagation();
+    setPhotoIdx(i => (i - 1 + gallery.length) % gallery.length);
+  }, [gallery.length]);
+
+  const next = useCallback(e => {
+    e.stopPropagation();
+    setPhotoIdx(i => (i + 1) % gallery.length);
+  }, [gallery.length]);
+
+  const handleKey = useCallback(e => {
+    if (e.key === 'Escape')     onClose();
+    if (e.key === 'ArrowLeft')  setPhotoIdx(i => (i - 1 + gallery.length) % gallery.length);
+    if (e.key === 'ArrowRight') setPhotoIdx(i => (i + 1) % gallery.length);
+  }, [onClose, gallery.length]);
 
   useEffect(() => {
     document.body.classList.add('modal-open');
@@ -276,10 +334,37 @@ function Modal({ item, onClose }) {
 
         <div className={styles.modalImgWrap}>
           <ProductImage
-            src={item.image}
-            alt={`${item.collectionName} ${item.formNum}`}
+            key={gallery[photoIdx]}
+            src={gallery[photoIdx]}
+            alt={`${item.collectionName} ${item.formNum} — фото ${photoIdx + 1}`}
             className={styles.modalImg}
           />
+
+          {hasGallery && (
+            <>
+              <button
+                className={`${styles.modalGalleryBtn} ${styles.modalGalleryPrev}`}
+                onClick={prev}
+                aria-label="Предыдущее фото"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <button
+                className={`${styles.modalGalleryBtn} ${styles.modalGalleryNext}`}
+                onClick={next}
+                aria-label="Следующее фото"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+              <div className={styles.modalCounter}>{photoIdx + 1} / {gallery.length}</div>
+            </>
+          )}
         </div>
 
         <div className={styles.modalInfo}>
@@ -369,6 +454,13 @@ function Pagination({ page, totalPages, onChange }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
+const RELIGION_TABS = [
+  { key: 'muslim',    label: 'Мусульманские' },
+  { key: 'christian', label: 'Христианские' },
+  { key: 'metal',     label: 'Изделия из металла' },
+  { key: 'complex',   label: 'Комплексы' },
+];
+
 export default function Catalog() {
   const [ref, inView]                 = useInView(0.05);
   const [religion, setReligion]       = useState('muslim');
@@ -381,7 +473,6 @@ export default function Catalog() {
 
   const currentCollections = RELIGION_COLLECTIONS[religion];
 
-  // Search narrows results within the active religion + collection filter
   const filtered = useMemo(() => {
     const base = ALL_ITEMS.filter(item =>
       item.religion === religion &&
@@ -396,10 +487,8 @@ export default function Catalog() {
     );
   }, [religion, collection, query]);
 
-  // Reset to page 1 whenever the result set changes
   useEffect(() => { setPage(1); }, [religion, collection, query]);
 
-  // Detect when the filter bar becomes sticky via sentinel IntersectionObserver
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -424,6 +513,8 @@ export default function Catalog() {
     document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  const useContain = religion !== 'muslim';
+
   return (
     <section id="catalog" className={styles.section} ref={ref}>
       {modalItem && (
@@ -432,25 +523,17 @@ export default function Catalog() {
 
       <div className={styles.container}>
 
-        {/* Section heading */}
         <div className={inView ? `${styles.head} ${styles.visible}` : styles.head}>
           <h2 className={styles.sectionTitle}>Каталог памятников</h2>
           <p className={styles.sectionSub}>Выберите форму и получите консультацию</p>
         </div>
 
-        {/* Sentinel — zero-height element that triggers sticky shadow when it scrolls past the header */}
         <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
 
-        {/* Sticky filter bar */}
         <div className={filterStuck ? `${styles.filterBar} ${styles.filterBarStuck}` : styles.filterBar}>
 
-          {/* Religion tabs */}
           <div className={inView ? `${styles.religionTabs} ${styles.visible}` : styles.religionTabs}>
-            {[
-              { key: 'muslim',    label: 'Мусульманские' },
-              { key: 'christian', label: 'Христианские' },
-              { key: 'metal',     label: 'Изделия из металла' },
-            ].map(tab => (
+            {RELIGION_TABS.map(tab => (
               <button
                 key={tab.key}
                 className={
@@ -465,7 +548,6 @@ export default function Catalog() {
             ))}
           </div>
 
-          {/* Collection sub-filter — hidden for single-category tabs */}
           {currentCollections.length > 1 && (
             <div className={inView ? `${styles.subFilter} ${styles.visible}` : styles.subFilter}>
               {currentCollections.map(col => (
@@ -489,14 +571,12 @@ export default function Catalog() {
 
         </div>
 
-        {/* Search results hint */}
         {query.trim() && (
           <p className={styles.searchHint}>
             По запросу <strong>«{query}»</strong>: {filtered.length} {pluralItems(filtered.length)}
           </p>
         )}
 
-        {/* Product grid or empty state */}
         {pagedItems.length > 0 ? (
           <div className={styles.grid}>
             {pagedItems.map(item => (
@@ -507,14 +587,14 @@ export default function Catalog() {
                 aria-label={`${item.collectionName} — Форма ${item.formNum}`}
               >
                 <div className={
-                  item.religion !== 'muslim'
+                  useContain
                     ? `${styles.cardImgWrap} ${styles.cardImgWrapContain}`
                     : styles.cardImgWrap
                 }>
                   <ProductImage
                     src={item.image}
                     alt={`${item.collectionName} ${item.formNum}`}
-                    className={item.religion !== 'muslim' ? styles.cardImgContain : undefined}
+                    className={useContain ? styles.cardImgContain : undefined}
                   />
                 </div>
                 <div className={styles.cardMeta}>
@@ -536,7 +616,6 @@ export default function Catalog() {
           </div>
         )}
 
-        {/* Pagination */}
         <Pagination page={page} totalPages={totalPages} onChange={handlePageChange} />
 
       </div>
