@@ -2,6 +2,29 @@ import React, { useState } from 'react';
 import { useInView } from '../../hooks/useInView';
 import styles from './ContactForm.module.css';
 
+const TG_TOKEN   = process.env.REACT_APP_TELEGRAM_BOT_TOKEN;
+const TG_CHAT_ID = process.env.REACT_APP_TELEGRAM_CHAT_ID;
+
+async function sendToTelegram({ name, phone, comment }) {
+  const text =
+    `🔔 Новая заявка с сайта Sezim Stone\n` +
+    `👤 Имя: ${name}\n` +
+    `📞 Телефон: ${phone}\n` +
+    `💬 Комментарий: ${comment || '—'}`;
+
+  const res = await fetch(
+    `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text }),
+    }
+  );
+
+  if (!res.ok) throw new Error(`Telegram API error: ${res.status}`);
+  return res.json();
+}
+
 function WhatsAppIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -13,17 +36,27 @@ function WhatsAppIcon() {
 export default function ContactForm() {
   const [ref, inView] = useInView(0.1);
   const [form, setForm]       = useState({ name: '', phone: '', comment: '' });
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus]   = useState('idle'); // idle | sending | success | error
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitted(true);
-    setForm({ name: '', phone: '', comment: '' });
-    setTimeout(() => setSubmitted(false), 5000);
+    setStatus('sending');
+
+    try {
+      await sendToTelegram(form);
+      setForm({ name: '', phone: '', comment: '' });
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
+  }
+
+  function handleReset() {
+    setStatus('idle');
   }
 
   return (
@@ -80,7 +113,8 @@ export default function ContactForm() {
 
           {/* Right: form */}
           <div className={inView ? `${styles.formWrap} ${styles.visible}` : styles.formWrap}>
-            {submitted ? (
+
+            {status === 'success' && (
               <div className={styles.success}>
                 <div className={styles.successIcon}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -89,9 +123,36 @@ export default function ContactForm() {
                   </svg>
                 </div>
                 <h3 className={styles.successTitle}>Заявка принята!</h3>
-                <p className={styles.successText}>Мы свяжемся с вами в течение часа.</p>
+                <p className={styles.successText}>
+                  Спасибо! Мы свяжемся с вами в ближайшее время.
+                </p>
               </div>
-            ) : (
+            )}
+
+            {status === 'error' && (
+              <div className={styles.success}>
+                <div className={`${styles.successIcon} ${styles.errorIcon}`}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <h3 className={styles.successTitle}>Ошибка отправки</h3>
+                <p className={styles.successText}>
+                  Что-то пошло не так, позвоните нам напрямую:
+                </p>
+                <a href="tel:+77759962343" className={styles.errorPhone}>
+                  +7 775 996 2343
+                </a>
+                <button className={styles.retryBtn} onClick={handleReset}>
+                  Попробовать снова
+                </button>
+              </div>
+            )}
+
+            {(status === 'idle' || status === 'sending') && (
               <form className={styles.form} onSubmit={handleSubmit}>
                 <h3 className={styles.formTitle}>Получить консультацию</h3>
                 <div className={styles.group}>
@@ -105,6 +166,7 @@ export default function ContactForm() {
                     value={form.name}
                     onChange={handleChange}
                     required
+                    disabled={status === 'sending'}
                   />
                 </div>
                 <div className={styles.group}>
@@ -118,6 +180,7 @@ export default function ContactForm() {
                     value={form.phone}
                     onChange={handleChange}
                     required
+                    disabled={status === 'sending'}
                   />
                 </div>
                 <div className={styles.group}>
@@ -130,16 +193,22 @@ export default function ContactForm() {
                     value={form.comment}
                     onChange={handleChange}
                     rows={4}
+                    disabled={status === 'sending'}
                   />
                 </div>
-                <button type="submit" className={styles.submitBtn}>
-                  Получить консультацию
+                <button
+                  type="submit"
+                  className={styles.submitBtn}
+                  disabled={status === 'sending'}
+                >
+                  {status === 'sending' ? 'Отправляем...' : 'Получить консультацию'}
                 </button>
                 <p className={styles.privacyNote}>
                   Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
                 </p>
               </form>
             )}
+
           </div>
 
         </div>

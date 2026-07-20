@@ -250,6 +250,45 @@
   color: var(--text-body);
 }
 
+.errorIcon {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.errorPhone {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.errorPhone:hover { color: var(--accent); }
+
+.retryBtn {
+  margin-top: 0.25rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.55rem 1.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.retryBtn:hover {
+  border-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* Responsive */
 
 @media (max-width: 900px) {
