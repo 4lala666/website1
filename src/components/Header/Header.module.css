@@ -53,7 +53,16 @@
   user-select: none;
 }
 
-/* ── Search ── */
+/* ── Search outer (anchors dropdown) ── */
+
+.searchOuter {
+  position: relative;
+  max-width: 340px;
+  width: 100%;
+  justify-self: center;
+}
+
+/* ── Search input wrap ── */
 
 .searchWrap {
   display: flex;
@@ -63,7 +72,6 @@
   border: 1px solid var(--border);
   border-radius: 100px;
   padding: 0.5rem 1.1rem;
-  max-width: 340px;
   width: 100%;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -96,14 +104,114 @@
   font-family: var(--font-sans);
   font-size: 0.875rem;
   color: var(--text-dark);
+  min-width: 0;
 }
 
 .searchInput::placeholder {
   color: var(--text-dim);
 }
 
-/* Remove browser search cancel button */
-.searchInput::-webkit-search-cancel-button { display: none; }
+.searchClear {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.searchClear:hover { color: var(--text-dark); }
+.searchClear svg { width: 100%; height: 100%; }
+
+/* ── Search dropdown ── */
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 300;
+  overflow: hidden;
+  animation: dropIn 0.18s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dropResult {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  padding: 0.7rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.dropResult:last-child { border-bottom: none; }
+.dropResult:hover { background: var(--accent-pale); }
+
+.dropBadge {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.45rem;
+  border-radius: 100px;
+  margin-bottom: 0.1rem;
+}
+
+.badgeSection {
+  background: #EBF5FB;
+  color: #2471A3;
+}
+
+.badgeCatalog {
+  background: var(--accent-pale);
+  color: var(--accent-hover);
+}
+
+.badgeInfo {
+  background: #F4F6F7;
+  color: #5D6D7E;
+}
+
+.dropTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+
+.dropSub {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.dropEmpty {
+  padding: 1.25rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
 
 /* ── Right section ── */
 
@@ -273,9 +381,8 @@
 }
 
 @media (max-width: 560px) {
-  .inner { padding: 0 1.25rem; }
-  .searchWrap { display: none; }
-  .inner { grid-template-columns: auto auto; }
+  .inner { padding: 0 1.25rem; grid-template-columns: auto auto; }
+  .searchOuter { display: none; }
   .logoText { font-size: 1rem; }
 }
 

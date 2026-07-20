@@ -473,6 +473,30 @@ export default function Catalog() {
 
   const currentCollections = RELIGION_COLLECTIONS[religion];
 
+  // Activate tab from URL param on first mount (?tab=complexes, ?tab=muslim, etc.)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    const tabMap = { complexes: 'complex', complex: 'complex', muslim: 'muslim', christian: 'christian', metal: 'metal' };
+    if (tabParam && tabMap[tabParam]) {
+      setReligion(tabMap[tabParam]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Listen for in-page tab activation events (from Header nav / search results)
+  useEffect(() => {
+    function onTabEvent(e) {
+      const { tab } = e.detail || {};
+      if (tab && RELIGION_COLLECTIONS[tab]) {
+        setReligion(tab);
+        setCollection('all');
+      }
+    }
+    window.addEventListener('catalog:tab', onTabEvent);
+    return () => window.removeEventListener('catalog:tab', onTabEvent);
+  }, []);
+
   const filtered = useMemo(() => {
     const base = ALL_ITEMS.filter(item =>
       item.religion === religion &&
