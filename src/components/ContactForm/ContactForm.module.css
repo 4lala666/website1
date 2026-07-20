@@ -1,6 +1,7 @@
 .section {
   padding: 6rem 0;
-  background: var(--bg-alt);
+  background: var(--bg-dark);
+  border-top: 1px solid rgba(192, 154, 72, 0.18);
 }
 
 .container {
@@ -29,13 +30,13 @@
   font-family: var(--font-serif);
   font-size: clamp(1.8rem, 3vw, 2.5rem);
   font-weight: 400;
-  color: var(--text-dark);
+  color: #ffffff;
   margin-bottom: 0.875rem;
 }
 
 .sub {
   font-size: 0.95rem;
-  color: var(--text-body);
+  color: rgba(255, 255, 255, 0.60);
   line-height: 1.75;
   margin-bottom: 2.5rem;
 }
@@ -57,22 +58,22 @@
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: rgba(192, 154, 72, 0.70);
 }
 
 .contactVal {
   font-size: 0.95rem;
-  color: var(--text-dark);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .contactLink {
   font-size: 0.95rem;
-  color: var(--text-dark);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.contactLink:hover { color: var(--accent); }
+.contactLink:hover { color: var(--accent-light); }
 
 /* WhatsApp button */
 
@@ -110,7 +111,7 @@
 .mapWrap {
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .map {

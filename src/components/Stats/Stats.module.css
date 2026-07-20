@@ -1,6 +1,8 @@
 .stats {
   background: var(--bg-dark);
-  padding: 5rem 0;
+  padding: 5.5rem 0;
+  border-top: 1px solid rgba(192, 154, 72, 0.30);
+  border-bottom: 1px solid rgba(192, 154, 72, 0.12);
 }
 
 .inner {
@@ -9,19 +11,19 @@
   padding: 0 2rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  background: rgba(255,255,255,0.06);
+  gap: 1px;
+  background: rgba(192, 154, 72, 0.18);
 }
 
 .card {
   background: var(--bg-dark);
-  padding: 3rem 2rem;
+  padding: 3.5rem 2rem;
   text-align: center;
-  transition: background 0.3s ease;
+  transition: background 0.35s ease;
 }
 
 .card:hover {
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .num {
@@ -29,12 +31,12 @@
   align-items: baseline;
   justify-content: center;
   gap: 0.1em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
 }
 
 .count {
   font-family: var(--font-serif);
-  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-size: clamp(2.8rem, 4vw, 4.2rem);
   font-weight: 400;
   color: #ffffff;
   line-height: 1;
@@ -49,17 +51,17 @@
 }
 
 .label {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.85);
-  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.80);
+  margin-bottom: 0.35rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
 }
 
 .desc {
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.42);
   letter-spacing: 0.03em;
 }
 
@@ -71,4 +73,5 @@
 @media (max-width: 480px) {
   .inner { grid-template-columns: repeat(2, 1fr); }
   .card { padding: 2rem 1rem; }
+  .count { font-size: clamp(2.2rem, 8vw, 2.8rem); }
 }

@@ -2,7 +2,7 @@
 
 .section {
   padding: 6rem 0;
-  background: #f8f6f2;
+  background: var(--bg-alt);
 }
 
 .head {
@@ -50,9 +50,9 @@
 .card {
   flex: 1;
   min-width: 0;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
   padding: 24px;
 }
 
@@ -108,19 +108,20 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #ffffff;
-  border: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #333333;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  color: var(--text-dark);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .navBtn:hover {
-  background: #c8a05a;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #ffffff;
   transform: scale(1.08);
 }
@@ -143,7 +144,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #d8d8d8;
+  background: var(--border);
   border: none;
   cursor: pointer;
   padding: 0;
@@ -151,7 +152,7 @@
 }
 
 .dot.dotActive {
-  background: #c8a05a;
+  background: var(--accent);
   transform: scale(1.35);
 }
 
