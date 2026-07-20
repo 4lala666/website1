@@ -4,9 +4,9 @@ import { useCountUp } from '../../hooks/useCountUp';
 import styles from './Stats.module.css';
 
 const stats = [
-  { target: 17,   suffix: '+', label: 'лет на рынке',           desc: 'Работаем с 2007 года' },
+  { target: 6,   suffix: '+', label: 'лет на рынке',           desc: 'Работаем с 2019 года' },
   { target: 5000, suffix: '+', label: 'выполненных заказов',     desc: 'По всему Казахстану' },
-  { target: 5,    suffix: '',  label: 'лет гарантии',            desc: 'На все изделия' },
+  { target: 3,    suffix: '',  label: 'года гарантии',            desc: 'На все изделия' },
   { target: 100,  suffix: '%', label: 'собственное производство', desc: 'Без посредников' },
 ];
 

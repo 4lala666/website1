@@ -52,16 +52,7 @@ function WhatsAppIcon() {
   );
 }
 
-function InstagramIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
-      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" />
-      <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-    </svg>
-  );
-}
+
 
 function GmapsIcon() {
   return (
@@ -79,12 +70,11 @@ const contacts = [
   { icon: <PhoneIcon />, value: '+7 775 996 2343',          href: 'tel:+77759962343' },
   { icon: <MailIcon />,  value: 'info@mgranite.kz',         href: 'mailto:info@mgranite.kz' },
   { icon: <MapPinIcon />,value: 'г. Алматы, ул. Илтипат, 51', href: null },
-  { icon: <ClockIcon />, value: 'Ежедневно 09:00 — 18:00',  href: null },
+  { icon: <ClockIcon />, value: 'Понедельник — Суббота 09:00 — 18:00',  href: null },
 ];
 
 const socials = [
   { icon: <WhatsAppIcon />,  href: 'https://wa.me/77759962343', label: 'WhatsApp' },
-  { icon: <InstagramIcon />, href: '#',                          label: 'Instagram' },
   { icon: <GmapsIcon />,     href: 'https://maps.google.com/maps?q=Алматы,+ул.+Илтипат,+51', label: 'Google Maps' },
 ];
 
@@ -107,16 +97,7 @@ const navCols = [
       { label: 'Контакты',     href: '#contacts' },
     ],
   },
-  {
-    title: 'Информация',
-    links: [
-      { label: 'Как выбрать памятник', href: '#how-we-work' },
-      { label: 'Материалы',            href: '#catalog' },
-      { label: 'Этапы работы',         href: '#how-we-work' },
-      { label: 'Доставка и установка', href: '#how-we-work' },
-      { label: 'Частые вопросы',       href: '#contacts' },
-    ],
-  },
+
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -138,7 +119,7 @@ export default function Footer() {
             </a>
 
             <p className={styles.tagline}>
-              Создаём пространство<br />для диалога поколений
+              Создаём пространство для диалога поколений
             </p>
 
             <ul className={styles.contactList}>

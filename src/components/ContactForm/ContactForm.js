@@ -53,7 +53,8 @@ export default function ContactForm() {
               </div>
               <div className={styles.contactItem}>
                 <span className={styles.contactLabel}>Режим работы</span>
-                <span className={styles.contactVal}>Ежедневно 09:00 — 18:00</span>
+                <span className={styles.contactVal}>Понедельник — Суббота</span>
+                <span className={styles.contactVal}>09:00–18:00</span>
               </div>
             </div>
             <a
