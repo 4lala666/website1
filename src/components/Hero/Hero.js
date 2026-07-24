@@ -4,11 +4,14 @@ import styles from './Hero.module.css';
 export default function Hero() {
   return (
     <section className={styles.hero}>
-      <img
-        src="/images/hero.jpg"
-        alt="Памятники из гранита — Sezim Stone Алматы"
-        className={styles.heroBg}
-      />
+      <picture>
+        <source media="(max-width: 600px)" srcSet="/images/hero-mobile.jpg" />
+        <img
+          src="/images/hero.jpg"
+          alt="Памятники из гранита — Sezim Stone Алматы"
+          className={styles.heroBg}
+        />
+      </picture>
       <div className={styles.overlay} aria-hidden="true" />
       <div className={styles.content}>
         <h1 className={styles.title}>

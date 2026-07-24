@@ -91,7 +91,5 @@
 @media (max-width: 600px) {
   .hero { min-height: 75vh; }
   .btn  { width: 100%; justify-content: center; max-width: 320px; }
-  /* Shift focus right so the two people and monument stay in frame
-     on portrait mobile (cover clips the left/right edges on narrow screens) */
-  .heroBg { object-position: 65% center; }
+  /* object-position not needed — hero-mobile.jpg is pre-cropped for mobile */
 }
