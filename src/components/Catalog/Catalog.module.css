@@ -544,6 +544,15 @@
   .grid { grid-template-columns: repeat(2, 1fr); }
   .section { padding: 4rem 0; }
   .container { padding: 0 1.25rem; }
+
+  /* Make tabs row horizontally scrollable so it never breaks the page layout */
+  .religionTabs {
+    overflow-x: auto;
+    /* Hide scrollbar visually — users swipe, not scroll */
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* IE / Edge legacy */
+  }
+  .religionTabs::-webkit-scrollbar { display: none; } /* Chrome / Safari */
 }
 
 @media (max-width: 768px) {

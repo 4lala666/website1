@@ -381,7 +381,8 @@
 }
 
 @media (max-width: 560px) {
-  .inner { padding: 0 1.25rem; grid-template-columns: auto auto; }
+  /* 1fr pushes logo to fill remaining space → burger snaps to right edge */
+  .inner { padding: 0 1.25rem; grid-template-columns: 1fr auto; }
   .searchOuter { display: none; }
   .logoText { font-size: 1rem; }
 }
